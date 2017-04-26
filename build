@@ -1,0 +1,2 @@
+#! /usr/bin/env bash
+elm make --warn src/Main.elm --output=index.html
