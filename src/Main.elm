@@ -4,18 +4,18 @@ import Set exposing (Set)
 
 
 -- Model
-type alias Location = (Int, Int)
+type alias Coordinate = (Int, Int)
 
 
 type alias Model =
-    { alive : List (Set Location)
+    { alive : Set Coordinate
     , width : Int
     , height : Int}
 
 
 init : (Model, Cmd Msg)
 init =
-    ({alive = []
+    ({alive = Set.empty
     , width = 10
     , height = 10}, Cmd.none)
 
