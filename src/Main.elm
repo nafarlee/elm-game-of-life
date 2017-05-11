@@ -2,6 +2,7 @@ import Time exposing (Time,second)
 import Html exposing (Html,text)
 import Set exposing (Set)
 import Cardinal exposing (Coordinate,Bound)
+import Dirty
 import Random
 
 
@@ -9,7 +10,7 @@ import Random
 type alias Model =
     { alive : Set Coordinate
     , width : Int
-    , height : Int}
+    , height : Int }
 
 
 init : (Model, Cmd Msg)
