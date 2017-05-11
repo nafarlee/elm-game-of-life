@@ -1,13 +1,11 @@
 import Time exposing (Time,second)
 import Html exposing (Html,text)
 import Set exposing (Set)
+import Cardinal exposing (Coordinate,Bound)
 import Random
 
 
 -- Model
-type alias Coordinate = (Int, Int)
-
-
 type alias Model =
     { alive : Set Coordinate
     , width : Int
