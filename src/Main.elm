@@ -37,7 +37,7 @@ type Msg
 
 -- View
 view : Model -> Html Msg
-view matrix = text "banana"
+view model = text <| toString model
 
 
 -- Update
