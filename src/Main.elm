@@ -1,6 +1,7 @@
 import Time exposing (Time,second)
 import Html exposing (Html,text)
 import Set exposing (Set)
+import Random
 
 
 -- Model
@@ -15,14 +16,23 @@ type alias Model =
 
 init : (Model, Cmd Msg)
 init =
+  let
+      width = 10
+      widthCoordinateGenerator = Random.int 0 <| width - 1
+      height = 10
+      heightCoordinateGenerator = Random.int 0 <| height - 1
+      locationGenerator = Random.pair widthCoordinateGenerator heightCoordinateGenerator
+      listGenerator = Random.list (width * height // 2) locationGenerator
+  in
     ({alive = Set.empty
-    , width = 10
-    , height = 10}, Cmd.none)
+    , width = width
+    , height = height}, Random.generate Genesis listGenerator)
 
 
 -- Messages
 type Msg
     = Tick Time
+    | Genesis (List(Coordinate))
 
 
 -- View
@@ -35,6 +45,9 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         Tick _ -> (model, Cmd.none)
+        Genesis points ->
+          ( { model | alive = Set.fromList points }
+          , Cmd.none)
 
 
 -- Subscriptions
