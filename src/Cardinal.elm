@@ -1,4 +1,4 @@
-module Cardinal exposing (Coordinate, Bound)
+module Cardinal exposing (..)
 
 
 type alias Coordinate = (Int, Int)
