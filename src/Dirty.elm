@@ -8,6 +8,11 @@ import Cardinal exposing (Coordinate,Bounds)
 
 find : Set (Coordinate) -> Bounds -> Set (Coordinate)
 find alive bounds =
+    let
+        neighbors = Set.foldl reducer Set.empty alive
+        fullSet = Set.union neighbors alive
+    in
+        Set.filter (Cardinal.withinBound bounds) fullSet
 
 
 reducer : Coordinate -> Set(Coordinate) -> Set(Coordinate)
