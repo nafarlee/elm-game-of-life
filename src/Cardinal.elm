@@ -30,3 +30,14 @@ findNeighbors coord =
           , ( x - 1, y )
           , ( x - 1, y - 1 )
           ]
+
+
+withinBound : Coordinate -> Bounds -> Bool
+withinBound coord bounds =
+    let
+        (x, y) = coord
+    in
+        x >= bounds.x &&
+        x < bounds.x + bounds.width &&
+        y >= bounds.y &&
+        y < bounds.y + bounds.height
