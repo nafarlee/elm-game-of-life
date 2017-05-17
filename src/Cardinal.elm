@@ -32,8 +32,8 @@ findNeighbors coord =
           ]
 
 
-withinBound : Coordinate -> Bounds -> Bool
-withinBound coord bounds =
+withinBound : Bounds -> Coordinate -> Bool
+withinBound bounds coord =
     let
         (x, y) = coord
     in
