@@ -1,7 +1,7 @@
 import Time exposing (Time,second)
 import Html exposing (Html,text)
 import Set exposing (Set)
-import Cardinal exposing (Coordinate,Bound)
+import Cardinal exposing (Coordinate,Bounds)
 import Dirty
 import Random
 
@@ -9,23 +9,22 @@ import Random
 -- Model
 type alias Model =
     { alive : Set Coordinate
-    , width : Int
-    , height : Int }
+    , bounds : Bounds
+    }
 
 
 init : (Model, Cmd Msg)
 init =
   let
-      width = 10
-      widthCoordinateGenerator = Random.int 0 <| width - 1
-      height = 10
-      heightCoordinateGenerator = Random.int 0 <| height - 1
+      bounds = { x = 0, y = 0, width = 10, height = 10 }
+      widthCoordinateGenerator = Random.int bounds.x <| bounds.width - 1
+      heightCoordinateGenerator = Random.int bounds.y <| bounds.height - 1
       locationGenerator = Random.pair widthCoordinateGenerator heightCoordinateGenerator
-      listGenerator = Random.list (width * height // 2) locationGenerator
+      listGenerator = Random.list (bounds.width * bounds.height // 2) locationGenerator
   in
     ({alive = Set.empty
-    , width = width
-    , height = height}, Random.generate Genesis listGenerator)
+    , bounds = bounds
+    }, Random.generate Genesis listGenerator)
 
 
 -- Messages
