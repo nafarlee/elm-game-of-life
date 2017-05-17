@@ -3,10 +3,10 @@ module Dirty exposing (find)
 
 import Set exposing (Set)
 
-import Cardinal exposing (Coordinate,Bound)
+import Cardinal exposing (Coordinate,Bounds)
 
 
-find : Set (Coordinate) -> Bound -> Set (Coordinate)
+find : Set (Coordinate) -> Bounds -> Set (Coordinate)
 find alive bounds =
 
 
