@@ -2,7 +2,6 @@ import Time exposing (Time,second)
 import Html exposing (Html,text)
 import Set exposing (Set)
 import Cardinal exposing (Coordinate,Bounds)
-import Dirty
 import Random
 
 
