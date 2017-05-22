@@ -49,7 +49,16 @@ drawRect bounds svgWidth svgHeight coord =
 
 -- View
 view : Model -> Html Msg
-view model = text <| toString model
+view { alive, bounds } =
+    let
+        pxWidth = 800
+        pxHeight = 800
+    in
+        Svg.svg
+            [ width <| toString pxWidth
+            , height <| toString pxHeight
+            ]
+            (alive |> Set.toList |> List.map (drawRect bounds pxWidth pxHeight))
 
 
 -- Update
