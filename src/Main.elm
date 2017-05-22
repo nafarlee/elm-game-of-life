@@ -1,5 +1,5 @@
-import Time exposing (Time,second)
-import Html exposing (Html,text)
+import Svg exposing (Svg)
+import Svg.Attributes exposing(x, y, width, height)
 import Set exposing (Set)
 import Cardinal exposing (Coordinate,Bounds)
 import Random
@@ -31,6 +31,21 @@ type Msg
     = Tick Time
     | Genesis (List(Coordinate))
 
+
+drawRect : Bounds -> Int -> Int -> Coordinate -> Svg Msg
+drawRect bounds svgWidth svgHeight coord =
+    let
+        (xPos, yPos) = coord
+        w = svgWidth // bounds.width
+        h = svgHeight // bounds.height
+    in
+        Svg.rect
+            [ x <| toString <| xPos * w
+            , y <| toString <| yPos * h
+            , width <| toString <| w
+            , height <| toString <| h
+            ]
+            []
 
 -- View
 view : Model -> Html Msg
