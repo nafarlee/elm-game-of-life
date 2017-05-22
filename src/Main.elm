@@ -1,7 +1,11 @@
+import Time exposing (Time,millisecond)
+import Html exposing (Html)
 import Svg exposing (Svg)
 import Svg.Attributes exposing(x, y, width, height)
 import Set exposing (Set)
+import SetExtensions
 import Cardinal exposing (Coordinate,Bounds)
+import Conway
 import Random
 
 
@@ -65,10 +69,29 @@ view { alive, bounds } =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        Tick _ -> (model, Cmd.none)
+        Tick _ -> (tick model)
         Genesis points ->
           ( { model | alive = Set.fromList points }
           , Cmd.none)
+
+
+tick : Model -> (Model, Cmd Msg)
+tick { alive, bounds } =
+    let
+        isBoundedFn = Cardinal.withinBound bounds
+        getNeighborCount = \coord -> Cardinal.findNeighbors coord
+            |> Set.intersect alive
+            |> Set.size
+
+        stillAlive = Set.filter (getNeighborCount >> Conway.processAlive) alive
+
+        deadNeighbors = alive
+            |> SetExtensions.unionMap Cardinal.findNeighbors
+            |> Set.filter isBoundedFn
+            |> (flip Set.diff) alive
+        newlyAlive = Set.filter (getNeighborCount >> Conway.processDead) deadNeighbors
+    in
+        ({ alive = Set.union newlyAlive stillAlive, bounds = bounds }, Cmd.none)
 
 
 -- Subscriptions
