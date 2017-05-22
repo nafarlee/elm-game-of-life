@@ -1,4 +1,4 @@
-import Time exposing (Time,millisecond)
+import Time exposing (Time,second)
 import Html exposing (Html)
 import Svg exposing (Svg)
 import Svg.Attributes exposing(x, y, width, height)
