@@ -20,6 +20,7 @@ ifDead neighborCount =
 
 ifAlive : Int -> Cell
 ifAlive neighborCount =
-    if neighborCount <= 1 then Dead
-    else if neighborCount <= 3 then Alive
-    else Dead
+    if neighborCount < 2 || neighborCount > 3 then
+        Dead
+    else
+        Alive
