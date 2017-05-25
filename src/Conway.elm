@@ -1,7 +1,7 @@
 module Conway exposing (Cell(..), apply)
 
 
-type Cell = Alive | Dead
+import Cell exposing (Cell)
 
 
 apply : Int -> Cell -> Cell
