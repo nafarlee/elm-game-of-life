@@ -1,18 +1,11 @@
 module Conway exposing (Cell(..), apply)
 
 
-import Neighbors exposing (Neighbors)
-
-
 type Cell = Alive | Dead
 
 
-apply : Neighbors Cell -> Cell -> Cell
-apply neighbors cell =
-    let
-        aliveNeighbors = List.filter ((==) Alive) neighbors
-        neighborCount = List.length aliveNeighbors
-    in
+apply : Int -> Cell -> Cell
+apply neighborCount cell =
         case cell of
             Alive -> ifAlive neighborCount
             Dead -> ifDead neighborCount
