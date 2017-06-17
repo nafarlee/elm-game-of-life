@@ -1,74 +1,97 @@
 import Time exposing (Time,second)
-import Html exposing (Html,table,tr,td)
-import Html.Attributes exposing(style,height,width)
+import Html exposing (Html)
+import Svg exposing (Svg)
+import Svg.Attributes exposing(x, y, width, height)
+import Set exposing (Set)
+import SetExtensions
+import Cardinal exposing (Coordinate,Bounds)
+import Conway
 import Random
-
-import Matrix exposing (Matrix)
-
-import Conway exposing (Cell(Alive,Dead))
-import Neighbors exposing (neighborMap)
 
 
 -- Model
-type alias Model = Matrix Cell
-
-
-cell : Bool -> Cell
-cell b =
-    if b then
-        Alive
-    else
-        Dead
+type alias Model =
+    { alive : Set Coordinate
+    , bounds : Bounds
+    }
 
 
 init : (Model, Cmd Msg)
 init =
-    let
-        size = 100
-        matrix = Matrix.square size <| always Dead
-        matrixGenerator
-            = Random.bool
-            |> Random.map cell
-            |> Random.list size
-            |> Random.list size
-            |> Random.map Matrix.fromList
-    in
-        (matrix, Random.generate Genesis matrixGenerator)
+  let
+      bounds = { x = 0, y = 0, width = 10, height = 10 }
+      widthCoordinateGenerator = Random.int bounds.x <| bounds.width - 1
+      heightCoordinateGenerator = Random.int bounds.y <| bounds.height - 1
+      locationGenerator = Random.pair widthCoordinateGenerator heightCoordinateGenerator
+      listGenerator = Random.list (bounds.width * bounds.height // 2) locationGenerator
+  in
+    ({alive = Set.empty
+    , bounds = bounds
+    }, Random.generate Genesis listGenerator)
 
 
 -- Messages
 type Msg
     = Tick Time
-    | Genesis (Matrix Cell)
+    | Genesis (List(Coordinate))
 
+
+drawRect : Bounds -> Int -> Int -> Coordinate -> Svg Msg
+drawRect bounds svgWidth svgHeight coord =
+    let
+        (xPos, yPos) = coord
+        w = svgWidth // bounds.width
+        h = svgHeight // bounds.height
+    in
+        Svg.rect
+            [ x <| toString <| xPos * w
+            , y <| toString <| yPos * h
+            , width <| toString <| w
+            , height <| toString <| h
+            ]
+            []
 
 -- View
 view : Model -> Html Msg
-view matrix =
+view { alive, bounds } =
     let
-        innerMap = \cell ->
-            case cell of
-                Alive -> td [style [("backgroundColor", "black")]] []
-                Dead -> td [style [("backgroundColor", "white")]] []
-
-        outerMap = \row ->
-            tr [] <| List.map innerMap row
+        pxWidth = 800
+        pxHeight = 800
     in
-        table
-            [ style
-                [ ("table-layout", "fixed")
-                , ("height", "800px")
-                , ("width", "800px")
-                ]
-            ] <| List.map outerMap <| Matrix.toList matrix
+        Svg.svg
+            [ width <| toString pxWidth
+            , height <| toString pxHeight
+            ]
+            (alive |> Set.toList |> List.map (drawRect bounds pxWidth pxHeight))
 
 
 -- Update
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        Genesis matrix -> (matrix, Cmd.none)
-        Tick _ -> (neighborMap Conway.apply model, Cmd.none)
+        Tick _ -> (tick model)
+        Genesis points ->
+          ( { model | alive = Set.fromList points }
+          , Cmd.none)
+
+
+tick : Model -> (Model, Cmd Msg)
+tick { alive, bounds } =
+    let
+        isBoundedFn = Cardinal.withinBound bounds
+        getNeighborCount = \coord -> Cardinal.findNeighbors coord
+            |> Set.intersect alive
+            |> Set.size
+
+        stillAlive = Set.filter (getNeighborCount >> Conway.processAlive) alive
+
+        deadNeighbors = alive
+            |> SetExtensions.unionMap Cardinal.findNeighbors
+            |> Set.filter isBoundedFn
+            |> (flip Set.diff) alive
+        newlyAlive = Set.filter (getNeighborCount >> Conway.processDead) deadNeighbors
+    in
+        ({ alive = Set.union newlyAlive stillAlive, bounds = bounds }, Cmd.none)
 
 
 -- Subscriptions
